@@ -7,6 +7,7 @@ export function initAgentspaceServer() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(agentRouter[0], agentRouter[1]);
+  console.log("agentspace live at http://localhost:8090");
 
   return app;
 }
