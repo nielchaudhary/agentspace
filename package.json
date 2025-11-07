@@ -11,7 +11,7 @@
     "madge:check-build": "madge --circular --extensions ts cmd/ && madge --circular --extensions ts internal/",
     "build": "npm run format && npm run format:check && npm run lint:check && npm run madge:check-build && tsc -b",
     "dev:prod": "npm run build && NODE_ENV=production cross-env DEBUG=agentspace* node -r dotenv/config build/app.js",
-    "dev": "npm run format && npm run build && cross-env NODE_ENV=development DEBUG=agentspace* nodemon --watch cmd --watch internal --ext ts --exec tsx cmd/agentspace/main.ts",
+    "dev": "npm run format && npm run build && cross-env NODE_ENV=development DEBUG=agentspace* nodemon --watch cmd --watch internal --ext ts --exec \"tsx -r dotenv/config cmd/agentspace/main.ts\"",
     "lint:check": "eslint ."
   },
   "keywords": [],
@@ -25,11 +25,13 @@
     "@types/prettier": "^2.7.3",
     "cross-env": "^10.1.0",
     "debug": "^4.4.3",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "express-async-handler": "^1.2.0",
     "madge": "^8.0.0",
     "multer": "^2.0.2",
     "nodemon": "^3.1.10",
+    "pdf-parse": "^2.4.5",
     "prettier": "^3.6.2"
   },
   "devDependencies": {
