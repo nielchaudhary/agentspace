@@ -2,26 +2,29 @@
   "name": "ai-agent",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "cmd/agentspace/main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "madge:check-build": "madge --circular --extensions ts cmd/ && madge --circular --extensions ts internal/",
-    "build": "pnpm run format && pnpm run format:check && pnpm run lint:check && pnpm run madge:check-build && tsc -b",
-    "dev:prod": "pnpm run build && NODE_ENV=production cross-env DEBUG=liquidns* node -r dotenv/config build/app.js",
-    "dev": "pnpm run format && pnpm run build && NODE_ENV=development cross-env DEBUG=liquidns* nodemon --watch 'src/**/*.ts' --exec 'ts-node' cmd/agentspace/main.ts",
+    "build": "npm run format && npm run format:check && npm run lint:check && npm run madge:check-build && tsc -b",
+    "dev:prod": "npm run build && NODE_ENV=production cross-env DEBUG=agentspace* node -r dotenv/config build/app.js",
+    "dev": "npm run format && npm run build && cross-env NODE_ENV=development DEBUG=agentspace* nodemon --watch cmd --watch internal --ext ts --exec tsx cmd/agentspace/main.ts",
     "lint:check": "eslint ."
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
   "dependencies": {
     "@openai/agents": "^0.2.1",
+    "@types/debug": "^4.1.12",
     "@types/express": "^5.0.5",
     "@types/multer": "^2.0.0",
     "@types/prettier": "^2.7.3",
+    "cross-env": "^10.1.0",
+    "debug": "^4.4.3",
     "express": "^5.1.0",
     "express-async-handler": "^1.2.0",
     "madge": "^8.0.0",
@@ -30,7 +33,10 @@
     "prettier": "^3.6.2"
   },
   "devDependencies": {
+    "@types/node": "^24.10.0",
     "@typescript-eslint/eslint-plugin": "^8.46.3",
-    "@typescript-eslint/parser": "^8.46.3"
+    "@typescript-eslint/parser": "^8.46.3",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.6"
   }
 }
