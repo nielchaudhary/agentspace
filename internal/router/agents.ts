@@ -8,6 +8,6 @@ const router = express.Router();
 
 router.get('/history', getHistoryPostHandler);
 router.get('/translate', getTranslatedDataPostHandler);
-router.post('/context', uploadMiddleware, getContextSummaryPostHandler);
+router.post('/context-summarizer', uploadMiddleware, getContextSummaryPostHandler);
 
 export const agentRouter: [string, express.Router] = ['/agents', router];

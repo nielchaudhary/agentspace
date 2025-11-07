@@ -35,13 +35,19 @@ export const getContextSummaryPostHandler = asyncHandler(async (req: Request, re
   logger.info('Received file for context summarization:', uploadedFile?.originalname);
 
   try {
-    const paperContent = await parsePDFBuffer(uploadedFile.path);
-    logger.info('PDF content extracted:\n', paperContent);
+    const extractedData = await parsePDFBuffer(uploadedFile.path);
 
-    const summaryPrompt = `Summarize the following research paper:\n\n${paperContent}`;
+    if (!extractedData) {
+      res.status(500).json({ error: 'Failed to extract text from PDF' });
+      return;
+    }
+
+    logger.info('PDF content extracted:\n', extractedData.text);
+
+    const summaryPrompt = `Summarize the following research paper:\n\n${extractedData.text}`;
     const result = await run(contextAgent, summaryPrompt);
 
-    res.status(200).json({ summary: result });
+    res.status(200).json({ summary: result.finalOutput });
   } finally {
     await unlink(uploadedFile.path).catch(() => {});
   }
