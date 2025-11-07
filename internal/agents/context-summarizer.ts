@@ -1,8 +1,9 @@
 import { Agent, run } from '@openai/agents';
 import asyncHandler from 'express-async-handler';
 import type { Request, Response } from 'express';
-import { readFile, unlink } from 'node:fs/promises';
 import { Logger } from '../common/logger.js';
+import { parsePDFBuffer } from '../common/parse.js';
+import { unlink } from 'fs/promises';
 
 const logger = new Logger('context-summarizer');
 
@@ -21,19 +22,26 @@ Focus on accuracy, clarity, and relevance; avoid technical jargon unless needed 
 export const getContextSummaryPostHandler = asyncHandler(async (req: Request, res: Response) => {
   const uploadedFile = req.file;
 
+  if (!uploadedFile?.filename.endsWith('.pdf')) {
+    res.status(400).json({ error: 'Only PDF files are supported' });
+    return;
+  }
+
   if (!uploadedFile) {
     res.status(400).json({ error: 'Research paper is required' });
     return;
   }
 
-  const paperContent = await readFile(uploadedFile.path, 'utf8');
+  logger.info('Received file for context summarization:', uploadedFile?.originalname);
 
   try {
+    const paperContent = await parsePDFBuffer(uploadedFile.path);
+    logger.info('PDF content extracted:\n', paperContent);
+
     const summaryPrompt = `Summarize the following research paper:\n\n${paperContent}`;
     const result = await run(contextAgent, summaryPrompt);
-    logger.info(result);
 
-    res.status(200).json({ content: paperContent });
+    res.status(200).json({ summary: result });
   } finally {
     await unlink(uploadedFile.path).catch(() => {});
   }
