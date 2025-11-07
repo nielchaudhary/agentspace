@@ -2,7 +2,6 @@ import { Agent, run } from '@openai/agents';
 import asyncHandler from 'express-async-handler';
 import type { Request, Response } from 'express';
 import { readFile, unlink } from 'node:fs/promises';
-import multer from 'multer';
 import { Logger } from '../common/logger.js';
 
 const logger = new Logger('context-summarizer');
@@ -19,31 +18,7 @@ Focus on accuracy, clarity, and relevance; avoid technical jargon unless needed 
 `,
 });
 
-const multerConfig = multer.diskStorage({
-  destination: function (_req, _file, cb) {
-    cb(null, 'tmp/');
-  },
-  filename: function (_req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname);
-  },
-});
-
-const multerUpload = multer({ storage: multerConfig }).single('file');
-
-const uploadFile = (req: Request, res: Response) =>
-  new Promise<void>((resolve, reject) => {
-    multerUpload(req, res, (err) => {
-      if (err) {
-        reject(err);
-        return;
-      }
-      resolve();
-    });
-  });
-
 export const getContextSummaryPostHandler = asyncHandler(async (req: Request, res: Response) => {
-  await uploadFile(req, res);
-
   const uploadedFile = req.file;
 
   if (!uploadedFile) {
